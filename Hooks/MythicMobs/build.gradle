@@ -6,13 +6,8 @@ java {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven { url 'https://mvn.lumine.io/repository/maven-public/' }
-}
-
 dependencies {
-    compileOnly 'io.lumine:Mythic-Dist:5.13.0'
+    compileOnly 'io.lumine:MythicMobs:5.0.1'
     compileOnly 'org.spigotmc:v1_8_R3-Taco:latest'
     compileOnly project(":API")
     compileOnly project(":")
