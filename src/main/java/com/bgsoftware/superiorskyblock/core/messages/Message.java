@@ -1065,7 +1065,7 @@ public enum Message {
         convertMessageName(cfg, "DELETE_WARP_SIGN_BROKE", "WARP_SIGN_DEACTIVATED", converted);
         convertMessageName(cfg, "SET_WARP", "WARP_SET", converted);
         convertMessageName(cfg, "SET_WARP_OUTSIDE", "WARP_SET_OUTSIDE_ISLAND", converted);
-        convertMessageName(cfg, "TELEPORTED_TO_WARP", "WARP_TELEPORT", converted);
+        convertMessageName(cfg, "TELEPORTED_TO_WARP", "WARP_TELEPORT_SUCCESS", converted);
         convertMessageName(cfg, "TELEPORTED_TO_WARP_ANNOUNCEMENT", "WARP_TELEPORT_ANNOUNCEMENT", converted);
         convertMessageName(cfg, "UNSAFE_WARP", "WARP_TELEPORT_UNSAFE", converted);
 

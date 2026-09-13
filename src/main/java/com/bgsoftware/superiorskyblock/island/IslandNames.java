@@ -99,7 +99,7 @@ public class IslandNames {
     }
 
     public static boolean isValidWarpName(@Nullable SuperiorPlayer superiorPlayer, Island island, @Nullable String warpName) {
-        if (Text.isBlank(warpName) || warpName.indexOf(" ") > 0) {
+        if (Text.isBlank(warpName) || warpName.indexOf(" ") >= 0) {
             Message.WARP_NAME_INVALID.send(superiorPlayer);
             return false;
         }

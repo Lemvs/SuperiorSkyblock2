@@ -101,26 +101,33 @@ public class CmdSetWarp implements IPermissibleCommand {
         }
 
         String categoryName = null;
+        boolean privateFlag = BuiltinModules.WARPS.getConfiguration().isPrivateByDefault();
 
         if (args.length >= 3 && BuiltinModules.WARPS.getConfiguration().isCategoriesEnabled()) {
-            categoryName = Formatters.STRIP_COLOR_FORMATTER.format(args[2]);
+            String argument = Formatters.STRIP_COLOR_FORMATTER.format(args[2]);
 
-            if (!IslandNames.isValidWarpCategoryName(superiorPlayer, categoryName)) {
-                return;
-            }
+            if (argument.equalsIgnoreCase("true") || argument.equalsIgnoreCase("false")) {
+                privateFlag = Boolean.parseBoolean(argument);
+            } else {
+                categoryName = argument;
 
-            if (island.getWarpCategory(categoryName) == null &&
-                    !PluginEventsFactory.callIslandCreateWarpCategoryEvent(island, superiorPlayer, categoryName)) {
-                return;
+                if (!IslandNames.isValidWarpCategoryName(superiorPlayer, categoryName)) {
+                    return;
+                }
+
+                if (island.getWarpCategory(categoryName) == null &&
+                        !PluginEventsFactory.callIslandCreateWarpCategoryEvent(island, superiorPlayer, categoryName)) {
+                    return;
+                }
             }
         }
 
         WarpCategory warpCategory = categoryName == null ? null : island.createWarpCategory(categoryName);
 
-        boolean privateFlag = BuiltinModules.WARPS.getConfiguration().isPrivateByDefault();
-
-        if ((args.length == 4 && BuiltinModules.WARPS.getConfiguration().isCategoriesEnabled()) || args.length == 3) {
-            privateFlag = Boolean.parseBoolean(args[args.length - 1]);
+        if (args.length == 4 && BuiltinModules.WARPS.getConfiguration().isCategoriesEnabled()) {
+            privateFlag = Boolean.parseBoolean(args[3]);
+        } else if (args.length == 3 && !BuiltinModules.WARPS.getConfiguration().isCategoriesEnabled()) {
+            privateFlag = Boolean.parseBoolean(args[2]);
         }
 
         try (ObjectsPools.Wrapper<Location> wrapper = ObjectsPools.LOCATION.obtain()) {

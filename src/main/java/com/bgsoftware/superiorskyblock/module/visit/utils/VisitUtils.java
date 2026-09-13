@@ -172,7 +172,7 @@ public class VisitUtils {
 
             if (!superiorPlayer.hasBypassModeEnabled()) {
                 if (PluginEventsFactory.callIslandRemoveVisitorHomeEvent(island, superiorPlayer)) {
-                    island.setVisitorsLocation(null);
+                    island.setVisitorsLocation(dimension, null);
                     deactivateVisitorSign(island, location);
                 }
 

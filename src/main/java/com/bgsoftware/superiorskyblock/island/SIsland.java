@@ -282,7 +282,6 @@ public class SIsland implements Island {
     private volatile String formattedName;
     private volatile String strippedName;
     private volatile String description;
-    private final Synchronized<EnumerateMap<Dimension, String>> descriptions = Synchronized.of(new EnumerateMap<>(Dimension.values()));
 
     public SIsland(IslandBuilderImpl builder) {
         this.uuid = builder.uuid;
@@ -3814,8 +3813,10 @@ public class SIsland implements Island {
 
         try (ObjectsPools.Wrapper<LazyWorldLocation> wrapper = ObjectsPools.LAZY_LOCATION.obtain()) {
             Location location = islandWarp.getLocation(wrapper.getHandle());
-            this.warpsByLocation.write(warpsByLocation -> warpsByLocation.remove(location));
-            this.warpsByLocation.write(warpsByLocation -> warpsByLocation.put(newLocation, islandWarp));
+            this.warpsByLocation.write(warpsByLocation -> {
+                warpsByLocation.remove(location);
+                warpsByLocation.put(newLocation, islandWarp);
+            });
         }
 
         islandWarp.setLocation(newLocation);
