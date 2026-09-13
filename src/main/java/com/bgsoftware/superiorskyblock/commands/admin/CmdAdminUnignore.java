@@ -29,7 +29,8 @@ public class CmdAdminUnignore implements IAdminIslandCommand {
     public String getUsage(java.util.Locale locale) {
         return "admin unignore <" +
                 Message.COMMAND_ARGUMENT_PLAYER_NAME.getMessage(locale) + "/" +
-                Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + ">";
+                Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + "/" +
+                Message.COMMAND_ARGUMENT_ALL_ISLANDS.getMessage(locale) + ">";
     }
 
     @Override

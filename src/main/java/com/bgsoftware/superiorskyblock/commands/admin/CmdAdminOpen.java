@@ -31,7 +31,8 @@ public class CmdAdminOpen implements IAdminIslandCommand {
     public String getUsage(java.util.Locale locale) {
         return "admin open <" +
                 Message.COMMAND_ARGUMENT_PLAYER_NAME.getMessage(locale) + "/" +
-                Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + ">";
+                Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + "/" +
+                Message.COMMAND_ARGUMENT_ALL_ISLANDS.getMessage(locale) + ">";
     }
 
     @Override
