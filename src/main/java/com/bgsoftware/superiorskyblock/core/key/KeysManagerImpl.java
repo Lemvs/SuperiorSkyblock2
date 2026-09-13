@@ -31,8 +31,8 @@ import java.util.function.Supplier;
 
 public class KeysManagerImpl extends Manager implements KeysManager {
 
-    private static final KeyMap<CustomKeyParser> customMaterialKeyParsers = KeyMaps.createArrayMap(KeyIndicator.MATERIAL);
-    private static final KeyMap<CustomKeyParser> customEntityTypeKeyParsers = KeyMaps.createArrayMap(KeyIndicator.ENTITY_TYPE);
+    private static final KeyMap<CustomKeyParser> customMaterialKeyParsers = KeyMaps.createHashMap(KeyIndicator.MATERIAL);
+    private static final KeyMap<CustomKeyParser> customEntityTypeKeyParsers = KeyMaps.createHashMap(KeyIndicator.ENTITY_TYPE);
 
     public KeysManagerImpl(SuperiorSkyblockPlugin plugin) {
         super(plugin);
