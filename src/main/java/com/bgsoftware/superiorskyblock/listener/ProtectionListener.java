@@ -64,6 +64,8 @@ public class ProtectionListener extends AbstractGameEventListener {
     @Nullable
     private static final Material TARGET = EnumHelper.getEnum(Material.class, "TARGET");
     @Nullable
+    private static final EntityType LEASH_KNOT = EnumHelper.getEnum(EntityType.class, "LEASH_KNOT");
+    @Nullable
     private static final EntityType TRIDENT = EnumHelper.getEnum(EntityType.class, "TRIDENT");
     @Nullable
     private static final EntityType WIND_CHARGE = EnumHelper.getEnum(EntityType.class, "WIND_CHARGE");
@@ -206,13 +208,20 @@ public class ProtectionListener extends AbstractGameEventListener {
     }
 
     private boolean handleEntityInteract(GameEvent<GameEventArgs.PlayerInteractEvent> e) {
-        if (e.getArgs().clickedEntity == null) {
+        Entity entity = e.getArgs().clickedEntity;
+
+        if (entity == null) {
             return false;
         }
 
         SuperiorPlayer superiorPlayer = plugin.getPlayers().getSuperiorPlayer(e.getArgs().player);
-        InteractionResult interactionResult = this.protectionManager.get().handleEntityInteract(superiorPlayer,
-                e.getArgs().clickedEntity, e.getArgs().usedItem);
+
+        InteractionResult interactionResult;
+        if (entity.getType() == LEASH_KNOT) {
+            interactionResult = this.protectionManager.get().handleEntityLeash(superiorPlayer, entity);
+        } else {
+            interactionResult = this.protectionManager.get().handleEntityInteract(superiorPlayer, entity, e.getArgs().usedItem);
+        }
 
         if (ProtectionHelper.shouldPreventInteraction(interactionResult, superiorPlayer, true)) {
             e.setCancelled();
