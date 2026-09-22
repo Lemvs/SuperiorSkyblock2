@@ -8,9 +8,6 @@ import com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer;
 import com.bgsoftware.superiorskyblock.commands.CommandTabCompletes;
 import com.bgsoftware.superiorskyblock.commands.IAdminIslandCommand;
 import com.bgsoftware.superiorskyblock.commands.arguments.CommandArguments;
-import com.bgsoftware.superiorskyblock.commands.arguments.NumberArgument;
-import com.bgsoftware.superiorskyblock.core.events.args.PluginEventArgs;
-import com.bgsoftware.superiorskyblock.core.events.plugin.PluginEvent;
 import com.bgsoftware.superiorskyblock.core.events.plugin.PluginEventsFactory;
 import com.bgsoftware.superiorskyblock.core.messages.Message;
 import com.bgsoftware.superiorskyblock.island.IslandUtils;
@@ -19,41 +16,40 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-public class CmdAdminSetRoleLimit implements IAdminIslandCommand {
+public class CmdAdminRemoveRoleLimit implements IAdminIslandCommand {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("setrolelimit");
+        return Collections.singletonList("removerolelimit");
     }
 
     @Override
     public String getPermission() {
-        return "superior.admin.setrolelimit";
+        return "superior.admin.removerolelimit";
     }
 
     @Override
     public String getUsage(java.util.Locale locale) {
-        return "admin setrolelimit <" +
+        return "admin removerolelimit <" +
                 Message.COMMAND_ARGUMENT_PLAYER_NAME.getMessage(locale) + "/" +
                 Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + "/" +
                 Message.COMMAND_ARGUMENT_ALL_ISLANDS.getMessage(locale) + "> <" +
-                Message.COMMAND_ARGUMENT_ISLAND_ROLE.getMessage(locale) + "> <" +
-                Message.COMMAND_ARGUMENT_LIMIT.getMessage(locale) + ">";
+                Message.COMMAND_ARGUMENT_ISLAND_ROLE.getMessage(locale) + ">";
     }
 
     @Override
     public String getDescription(java.util.Locale locale) {
-        return Message.COMMAND_DESCRIPTION_ADMIN_SET_ROLE_LIMIT.getMessage(locale);
+        return Message.COMMAND_DESCRIPTION_ADMIN_REMOVE_ROLE_LIMIT.getMessage(locale);
     }
 
     @Override
     public int getMinArgs() {
-        return 5;
+        return 4;
     }
 
     @Override
     public int getMaxArgs() {
-        return 5;
+        return 4;
     }
 
     @Override
@@ -72,21 +68,12 @@ public class CmdAdminSetRoleLimit implements IAdminIslandCommand {
         if (playerRole == null)
             return;
 
-        NumberArgument<Integer> arguments = CommandArguments.getLimit(sender, args[4]);
-
-        if (!arguments.isSucceed())
-            return;
-
-        int limit = arguments.getNumber();
-
         int islandsChangedCount = 0;
 
         for (Island island : islands) {
-            PluginEvent<PluginEventArgs.IslandChangeRoleLimit> event = PluginEventsFactory.callIslandChangeRoleLimitEvent(
-                    island, sender, playerRole, limit);
-            if (!event.isCancelled()) {
-                island.setRoleLimit(playerRole, event.getArgs().roleLimit);
+            if (PluginEventsFactory.callIslandRemoveRoleLimitEvent(island, sender, playerRole)) {
                 ++islandsChangedCount;
+                island.removeRoleLimit(playerRole);
             }
         }
 

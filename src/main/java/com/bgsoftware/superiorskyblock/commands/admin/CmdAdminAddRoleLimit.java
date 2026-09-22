@@ -19,21 +19,21 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-public class CmdAdminSetRoleLimit implements IAdminIslandCommand {
+public class CmdAdminAddRoleLimit implements IAdminIslandCommand {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("setrolelimit");
+        return Collections.singletonList("addrolelimit");
     }
 
     @Override
     public String getPermission() {
-        return "superior.admin.setrolelimit";
+        return "superior.admin.addrolelimit";
     }
 
     @Override
     public String getUsage(java.util.Locale locale) {
-        return "admin setrolelimit <" +
+        return "admin addrolelimit <" +
                 Message.COMMAND_ARGUMENT_PLAYER_NAME.getMessage(locale) + "/" +
                 Message.COMMAND_ARGUMENT_ISLAND_NAME.getMessage(locale) + "/" +
                 Message.COMMAND_ARGUMENT_ALL_ISLANDS.getMessage(locale) + "> <" +
@@ -43,7 +43,7 @@ public class CmdAdminSetRoleLimit implements IAdminIslandCommand {
 
     @Override
     public String getDescription(java.util.Locale locale) {
-        return Message.COMMAND_DESCRIPTION_ADMIN_SET_ROLE_LIMIT.getMessage(locale);
+        return Message.COMMAND_DESCRIPTION_ADMIN_ADD_ROLE_LIMIT.getMessage(locale);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CmdAdminSetRoleLimit implements IAdminIslandCommand {
 
         for (Island island : islands) {
             PluginEvent<PluginEventArgs.IslandChangeRoleLimit> event = PluginEventsFactory.callIslandChangeRoleLimitEvent(
-                    island, sender, playerRole, limit);
+                    island, sender, playerRole, island.getRoleLimit(playerRole) + limit);
             if (!event.isCancelled()) {
                 island.setRoleLimit(playerRole, event.getArgs().roleLimit);
                 ++islandsChangedCount;

@@ -811,15 +811,16 @@ public class SIsland implements Island {
 
     @Override
     public void setCoopLimit(int coopLimit) {
-        coopLimit = Math.max(0, coopLimit);
+        int finalCoopLimit = Math.max(-1, coopLimit);
 
-        Log.debug(Debug.SET_COOP_LIMIT, owner.getName(), coopLimit);
+        Log.debug(Debug.SET_COOP_LIMIT, owner.getName(), finalCoopLimit);
 
-        // Original and new coop limit are the same
-        if (coopLimit == getCoopLimitRaw())
+        IntValue oldCoopLimit = this.coopLimit.set(IntValue.fixed(finalCoopLimit));
+
+        if (finalCoopLimit == IntValue.getNonSynced(oldCoopLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
-        this.coopLimit.set(IntValue.fixed(coopLimit));
         IslandsDatabaseBridge.saveCoopLimit(this);
     }
 
@@ -1900,17 +1901,20 @@ public class SIsland implements Island {
 
     @Override
     public void setIslandSize(int islandSize) {
-        islandSize = Math.max(1, islandSize);
+        int finalIslandSize = Math.max(1, islandSize);
 
-        Preconditions.checkArgument(islandSize <= plugin.getSettings().getMaxIslandSize(), "Border size " + islandSize + " cannot be larger than max island size: " + plugin.getSettings().getMaxIslandSize());
+        Preconditions.checkArgument(finalIslandSize <= plugin.getSettings().getMaxIslandSize(),
+                "Border size " + finalIslandSize + " cannot be larger than max island size: " + plugin.getSettings().getMaxIslandSize());
 
-        Log.debug(Debug.SET_SIZE, owner.getName(), islandSize);
+        Log.debug(Debug.SET_SIZE, owner.getName(), finalIslandSize);
 
-        if (islandSize == getIslandSizeRaw())
+        IntValue oldIslandSize = this.islandSize.get();
+
+        if (finalIslandSize == IntValue.getNonSynced(oldIslandSize, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
-        setIslandSizeInternal(IntValue.fixed(islandSize));
-
+        setIslandSizeInternal(IntValue.fixed(finalIslandSize));
         IslandsDatabaseBridge.saveSize(this);
     }
 
@@ -3108,21 +3112,18 @@ public class SIsland implements Island {
 
     @Override
     public void setCropGrowthMultiplier(double cropGrowth) {
-        cropGrowth = Math.max(1, cropGrowth);
+        double finalCropGrowth = Math.max(1, cropGrowth);
 
-        Log.debug(Debug.SET_CROP_GROWTH, owner.getName(), cropGrowth);
+        Log.debug(Debug.SET_CROP_GROWTH, owner.getName(), finalCropGrowth);
 
-        if (cropGrowth == getCropGrowthRaw())
+        DoubleValue oldCropGrowth = this.cropGrowth.set(DoubleValue.fixed(finalCropGrowth));
+
+        if (finalCropGrowth == DoubleValue.getNonSynced(oldCropGrowth, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
-
-        DoubleValue oldCropGrowth = this.cropGrowth.set(DoubleValue.fixed(cropGrowth));
-
-        if (cropGrowth == DoubleValue.getNonSynced(oldCropGrowth, IslandUpgradeConstants.SYNCED_VALUE))
-            return;
+        }
 
         IslandsDatabaseBridge.saveCropGrowth(this);
-
-        notifyCropGrowthChange(cropGrowth);
+        notifyCropGrowthChange(finalCropGrowth);
     }
 
     @Override
@@ -3137,14 +3138,15 @@ public class SIsland implements Island {
 
     @Override
     public void setSpawnerRatesMultiplier(double spawnerRates) {
-        spawnerRates = Math.max(1, spawnerRates);
+        double finalSpawnerRates = Math.max(1, spawnerRates);
 
-        Log.debug(Debug.SET_SPAWNER_RATES, owner.getName(), spawnerRates);
+        Log.debug(Debug.SET_SPAWNER_RATES, owner.getName(), finalSpawnerRates);
 
-        DoubleValue oldSpawnerRates = this.spawnerRates.set(DoubleValue.fixed(spawnerRates));
+        DoubleValue oldSpawnerRates = this.spawnerRates.set(DoubleValue.fixed(finalSpawnerRates));
 
-        if (spawnerRates == DoubleValue.getNonSynced(oldSpawnerRates, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalSpawnerRates == DoubleValue.getNonSynced(oldSpawnerRates, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
         IslandsDatabaseBridge.saveSpawnerRates(this);
     }
@@ -3161,14 +3163,15 @@ public class SIsland implements Island {
 
     @Override
     public void setMobDropsMultiplier(double mobDrops) {
-        mobDrops = Math.max(1, mobDrops);
+        double finalMobDrops = Math.max(1, mobDrops);
 
-        Log.debug(Debug.SET_MOB_DROPS, owner.getName(), mobDrops);
+        Log.debug(Debug.SET_MOB_DROPS, owner.getName(), finalMobDrops);
 
-        DoubleValue oldMobDrops = this.mobDrops.set(DoubleValue.fixed(mobDrops));
+        DoubleValue oldMobDrops = this.mobDrops.set(DoubleValue.fixed(finalMobDrops));
 
-        if (mobDrops == DoubleValue.getNonSynced(oldMobDrops, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalMobDrops == DoubleValue.getNonSynced(oldMobDrops, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
         IslandsDatabaseBridge.saveMobDrops(this);
     }
@@ -3227,17 +3230,18 @@ public class SIsland implements Island {
     public void setBlockLimit(Key key, int limit) {
         Preconditions.checkNotNull(key, "key parameter cannot be null.");
 
-        int finalLimit = Math.max(0, limit);
+        int finalBlockLimit = Math.max(-1, limit);
 
-        Log.debug(Debug.SET_BLOCK_LIMIT, owner.getName(), key, finalLimit);
+        Log.debug(Debug.SET_BLOCK_LIMIT, owner.getName(), key, finalBlockLimit);
 
-        IntValue oldLimit = blockLimits.put(key, IntValue.fixed(finalLimit));
+        IntValue oldBlockLimit = this.blockLimits.put(key, IntValue.fixed(finalBlockLimit));
 
-        if (limit == IntValue.getNonSynced(oldLimit, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalBlockLimit == IntValue.getNonSynced(oldBlockLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
         plugin.getBlockValues().addCustomBlockKey(key);
-        IslandsDatabaseBridge.saveBlockLimit(this, key, limit);
+        IslandsDatabaseBridge.saveBlockLimit(this, key, finalBlockLimit);
     }
 
     @Override
@@ -3246,10 +3250,11 @@ public class SIsland implements Island {
 
         Log.debug(Debug.REMOVE_BLOCK_LIMIT, owner.getName(), key);
 
-        IntValue oldBlockLimit = blockLimits.remove(key);
+        IntValue oldBlockLimit = this.blockLimits.remove(key);
 
-        if (oldBlockLimit == null)
+        if (oldBlockLimit == null) {
             return;
+        }
 
         IslandsDatabaseBridge.removeBlockLimit(this, key);
     }
@@ -3329,16 +3334,17 @@ public class SIsland implements Island {
     public void setEntityLimit(Key key, int limit) {
         Preconditions.checkNotNull(key, "key parameter cannot be null.");
 
-        int finalLimit = Math.max(0, limit);
+        int finalLimit = Math.max(-1, limit);
 
         Log.debug(Debug.SET_ENTITY_LIMIT, owner.getName(), key, finalLimit);
 
-        IntValue oldEntityLimit = entityLimits.put(key, IntValue.fixed(limit));
+        IntValue oldEntityLimit = this.entityLimits.put(key, IntValue.fixed(finalLimit));
 
-        if (limit == IntValue.getNonSynced(oldEntityLimit, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalLimit == IntValue.getNonSynced(oldEntityLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
-        IslandsDatabaseBridge.saveEntityLimit(this, key, limit);
+        IslandsDatabaseBridge.saveEntityLimit(this, key, finalLimit);
     }
 
     @Override
@@ -3347,10 +3353,11 @@ public class SIsland implements Island {
 
         Log.debug(Debug.REMOVE_ENTITY_LIMIT, owner.getName(), key);
 
-        IntValue oldEntityLimit = entityLimits.remove(key);
+        IntValue oldEntityLimit = this.entityLimits.remove(key);
 
-        if (oldEntityLimit == null)
+        if (oldEntityLimit == null) {
             return;
+        }
 
         IslandsDatabaseBridge.removeEntityLimit(this, key);
     }
@@ -3398,14 +3405,15 @@ public class SIsland implements Island {
 
     @Override
     public void setTeamLimit(int teamLimit) {
-        teamLimit = Math.max(0, teamLimit);
+        int finalTeamLimit = Math.max(-1, teamLimit);
 
-        Log.debug(Debug.SET_TEAM_LIMIT, owner.getName(), teamLimit);
+        Log.debug(Debug.SET_TEAM_LIMIT, owner.getName(), finalTeamLimit);
 
-        IntValue oldTeamLimit = this.teamLimit.set(IntValue.fixed(teamLimit));
+        IntValue oldTeamLimit = this.teamLimit.set(IntValue.fixed(finalTeamLimit));
 
-        if (teamLimit == IntValue.getNonSynced(oldTeamLimit, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalTeamLimit == IntValue.getNonSynced(oldTeamLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
         IslandsDatabaseBridge.saveTeamLimit(this);
     }
@@ -3422,14 +3430,15 @@ public class SIsland implements Island {
 
     @Override
     public void setWarpsLimit(int warpsLimit) {
-        warpsLimit = Math.max(0, warpsLimit);
+        int finalWarpsLimit = Math.max(-1, warpsLimit);
 
-        Log.debug(Debug.SET_WARPS_LIMIT, owner.getName(), warpsLimit);
+        Log.debug(Debug.SET_WARPS_LIMIT, owner.getName(), finalWarpsLimit);
 
-        IntValue oldWarpsLimit = this.warpsLimit.set(IntValue.fixed(warpsLimit));
+        IntValue oldWarpsLimit = this.warpsLimit.set(IntValue.fixed(finalWarpsLimit));
 
-        if (warpsLimit == IntValue.getNonSynced(oldWarpsLimit, IslandUpgradeConstants.SYNCED_VALUE))
+        if (finalWarpsLimit == IntValue.getNonSynced(oldWarpsLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
+        }
 
         IslandsDatabaseBridge.saveWarpsLimit(this);
     }
@@ -3567,24 +3576,20 @@ public class SIsland implements Island {
 
     @Override
     public void setRoleLimit(PlayerRole playerRole, int limit) {
-        // Legacy support for limits can be set to < 0 for removing the limit.
-        // Nowadays, removeRoleLimit exists.
-        if (limit < 0) {
-            removeRoleLimit(playerRole);
+        Preconditions.checkNotNull(playerRole, "playerRole parameter cannot be null.");
+
+        int finalRoleLimit = Math.max(-1, limit);
+
+        Log.debug(Debug.SET_ROLE_LIMIT, owner.getName(), playerRole.getName(), finalRoleLimit);
+
+        IntValue oldRoleLimit = this.roleLimits.writeAndGet(roleLimits ->
+                roleLimits.put(playerRole.getId(), IntValue.fixed(finalRoleLimit)));
+
+        if (finalRoleLimit == IntValue.getNonSynced(oldRoleLimit, IslandUpgradeConstants.SYNCED_VALUE)) {
             return;
         }
 
-        Preconditions.checkNotNull(playerRole, "playerRole parameter cannot be null.");
-
-        Log.debug(Debug.SET_ROLE_LIMIT, owner.getName(), playerRole.getName(), limit);
-
-        IntValue oldRoleLimit = roleLimits.writeAndGet(roleLimits ->
-                roleLimits.put(playerRole.getId(), IntValue.fixed(limit)));
-
-        if (limit == IntValue.getNonSynced(oldRoleLimit, IslandUpgradeConstants.SYNCED_VALUE))
-            return;
-
-        IslandsDatabaseBridge.saveRoleLimit(this, playerRole, limit);
+        IslandsDatabaseBridge.saveRoleLimit(this, playerRole, finalRoleLimit);
     }
 
     @Override
@@ -3593,10 +3598,12 @@ public class SIsland implements Island {
 
         Log.debug(Debug.REMOVE_ROLE_LIMIT, owner.getName(), playerRole.getName());
 
-        IntValue oldRoleLimit = roleLimits.writeAndGet(roleLimits -> roleLimits.remove(playerRole.getId()));
+        IntValue oldRoleLimit = this.roleLimits.writeAndGet(roleLimits ->
+                roleLimits.remove(playerRole.getId()));
 
-        if (oldRoleLimit == null)
+        if (oldRoleLimit == null) {
             return;
+        }
 
         IslandsDatabaseBridge.removeRoleLimit(this, playerRole);
     }
