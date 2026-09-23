@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CmdAdminAddWarpsLimit implements IAdminIslandCommand {
+
     @Override
     public List<String> getAliases() {
         return Collections.singletonList("addwarpslimit");
@@ -69,11 +70,6 @@ public class CmdAdminAddWarpsLimit implements IAdminIslandCommand {
             return;
 
         int limit = arguments.getNumber();
-
-        if (limit <= 0) {
-            Message.INVALID_AMOUNT.send(sender);
-            return;
-        }
 
         int islandsChangedCount = 0;
 
