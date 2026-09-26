@@ -5,6 +5,7 @@ import com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin;
 import com.bgsoftware.superiorskyblock.api.entity.EntityCategory;
 import com.bgsoftware.superiorskyblock.api.hooks.EntitiesProvider;
 import com.bgsoftware.superiorskyblock.api.key.Key;
+import com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer;
 import com.bgsoftware.superiorskyblock.core.EnumHelper;
 import com.bgsoftware.superiorskyblock.core.ServerVersion;
 import com.bgsoftware.superiorskyblock.core.collections.CollectionsFactory;
@@ -114,11 +115,18 @@ public class BukkitEntities {
         entityContent.write(entityContent -> entityContent.remove(livingEntity.getEntityId()));
     }
 
+    @Nullable
+    public static SuperiorPlayer getSuperiorPlayerSource(Entity damager) {
+        return getPlayerSource(damager).map(plugin.getPlayers()::getSuperiorPlayer).orElse(null);
+    }
+
     public static Optional<Player> getPlayerSource(Entity damager) {
         if (damager instanceof Projectile) {
             ProjectileSource shooter = ((Projectile) damager).getShooter();
-            if (shooter instanceof Player)
+
+            if (shooter instanceof Player) {
                 return Optional.of((Player) shooter);
+            }
         } else if (damager instanceof Player) {
             return Optional.of((Player) damager);
         }

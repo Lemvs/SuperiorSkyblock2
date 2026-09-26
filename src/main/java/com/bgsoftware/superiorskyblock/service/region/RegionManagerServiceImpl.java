@@ -68,7 +68,7 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
     @Nullable
     private static final Material CAVE_VINES_PLANT = EnumHelper.getEnum(Material.class, "CAVE_VINES_PLANT");
     @Nullable
-    private static final Material GOLDEN_DANDELION_TYPE = EnumHelper.getEnum(Material.class, "GOLDEN_DANDELION");
+    private static final Material GOLDEN_DANDELION = EnumHelper.getEnum(Material.class, "GOLDEN_DANDELION");
     @Nullable
     private static final Material OMINOUS_TRIAL_KEY = EnumHelper.getEnum(Material.class, "OMINOUS_TRIAL_KEY");
     @Nullable
@@ -79,12 +79,13 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
     private static final Material TURTLE_EGG = EnumHelper.getEnum(Material.class, "TURTLE_EGG");
     @Nullable
     private static final Material VAULT = EnumHelper.getEnum(Material.class, "VAULT");
+
     @Nullable
-    private static final EntityType HAPPY_GHAST_TYPE = EnumHelper.getEnum(EntityType.class, "HAPPY_GHAST");
+    private static final EntityType HAPPY_GHAST = EnumHelper.getEnum(EntityType.class, "HAPPY_GHAST");
     @Nullable
-    private static final EntityType LLAMA_TYPE = EnumHelper.getEnum(EntityType.class, "LLAMA");
+    private static final EntityType LLAMA = EnumHelper.getEnum(EntityType.class, "LLAMA");
     @Nullable
-    private static final EntityType PARROT_TYPE = EnumHelper.getEnum(EntityType.class, "PARROT");
+    private static final EntityType PARROT = EnumHelper.getEnum(EntityType.class, "PARROT");
 
     private static final int MAX_PICKUP_DISTANCE = 1;
     private static UnparsedEnumerateSet<IslandPrivilege> WORLD_PERMISSIONS_CACHE;
@@ -280,13 +281,13 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
             }
 
             IslandPrivilege islandPrivilege = null;
-            if (usedItem != null && entity instanceof Animals && (usedItemType == GOLDEN_DANDELION_TYPE
+            if (usedItem != null && entity instanceof Animals && (usedItemType == GOLDEN_DANDELION
                     || plugin.getNMSEntities().isAnimalFood(usedItem, (Animals) entity))) {
                 islandPrivilege = IslandPrivileges.ANIMAL_BREED;
             } else if (usedItemType == Material.NAME_TAG) {
                 islandPrivilege = IslandPrivileges.NAME_ENTITY;
-            } else if (usedItemType == Material.SADDLE || (entityType == LLAMA_TYPE && Materials.isCarpet(usedItemType))
-                    || (entityType == HAPPY_GHAST_TYPE && Materials.isHarness(usedItemType))
+            } else if (usedItemType == Material.SADDLE || (entityType == LLAMA && Materials.isCarpet(usedItemType))
+                    || (entityType == HAPPY_GHAST && Materials.isHarness(usedItemType))
                     || (usedItemType == Material.SHEARS && plugin.getNMSEntities().canShearSaddleFromEntity(entity))) {
                 islandPrivilege = IslandPrivileges.SADDLE_ENTITY;
             } else if (usedItemType == Material.FLINT_AND_STEEL && entity instanceof Creeper) {
@@ -305,7 +306,7 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
                 List<EntityCategory> entityCategories = BukkitEntities.getCategories(entity);
 
                 List<IslandPrivilege> islandPrivileges;
-                if (entityType == PARROT_TYPE && usedItemType == Material.COOKIE) {
+                if (entityType == PARROT && usedItemType == Material.COOKIE) {
                     islandPrivileges = ProtectionHelper.getEntityPrivileges(entityCategories, EntityCategory::getDamagePrivilege);
                 } else {
                     islandPrivileges = ProtectionHelper.getEntityPrivileges(entityCategories, EntityCategory::getInteractPrivilege);
@@ -575,6 +576,7 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
                 0, true, false);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private InteractionResult handleInteractionInternal(SuperiorPlayer superiorPlayer, Location location,
                                                         IslandPrivilege islandPrivilege, int extraRadius,
                                                         boolean checkIslandBoundaries, boolean checkRecalculation) {
@@ -582,6 +584,7 @@ public class RegionManagerServiceImpl implements RegionManagerService, IService 
                 extraRadius, checkIslandBoundaries, checkRecalculation, null, true);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private InteractionResult handleInteractionInternal(SuperiorPlayer superiorPlayer, Location location,
                                                         List<IslandPrivilege> islandPrivileges, int extraRadius,
                                                         boolean checkIslandBoundaries, boolean checkRecalculation) {
