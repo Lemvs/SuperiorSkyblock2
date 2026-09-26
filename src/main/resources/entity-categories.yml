@@ -26,7 +26,7 @@
 
 # Built-in categories.
 # These categories are provided by the plugin and will always exist.
-# Unlike custom categories, they do not have a 'entities' list, as their entities are
+# Unlike custom categories, they do not have an 'entities' list, as their entities are
 # populated automatically based on the server version.
 # You can use 'skipped-entities' to exclude specific entities from a built-in category.
 builtin-categories:
@@ -122,6 +122,14 @@ custom-categories:
       SPAWN: BUILD
       DAMAGE: BREAK
       INTERACT: BUILD
+
+  CUSHION:
+    entities:
+      - CUSHION
+    actions:
+      SPAWN: BUILD
+      DAMAGE: BREAK
+      INTERACT: INTERACT
 
   ITEM_FRAME:
     entities:

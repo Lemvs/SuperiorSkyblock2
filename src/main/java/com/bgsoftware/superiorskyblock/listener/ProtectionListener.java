@@ -64,6 +64,8 @@ public class ProtectionListener extends AbstractGameEventListener {
     @Nullable
     private static final Material TARGET = EnumHelper.getEnum(Material.class, "TARGET");
     @Nullable
+    private static final EntityType CUSHION_TYPE = EnumHelper.getEnum(EntityType.class, "CUSHION");
+    @Nullable
     private static final EntityType LEASH_KNOT = EnumHelper.getEnum(EntityType.class, "LEASH_KNOT");
     @Nullable
     private static final EntityType TRIDENT = EnumHelper.getEnum(EntityType.class, "TRIDENT");
@@ -98,7 +100,7 @@ public class ProtectionListener extends AbstractGameEventListener {
         if (handleBlockFertilize(e)) return;
         if (handleBedPlace(e)) return;
         if (handleBrushUse(e)) return;
-        if (handleMinecartPlace(e)) return;
+        if (handleEntityPlace(e)) return;
         if (handleEntityInteract(e)) return;
         handleBlockInteract(e, e.getArgs().player, e.getArgs().action, e.getArgs().clickedBlock, e.getArgs().usedHand,
                 e.getArgs().usedItem);
@@ -170,7 +172,7 @@ public class ProtectionListener extends AbstractGameEventListener {
         return false;
     }
 
-    private boolean handleMinecartPlace(GameEvent<GameEventArgs.PlayerInteractEvent> e) {
+    private boolean handleEntityPlace(GameEvent<GameEventArgs.PlayerInteractEvent> e) {
         Action action = e.getArgs().action;
         ItemStack usedItem = e.getArgs().usedItem;
 
@@ -180,8 +182,8 @@ public class ProtectionListener extends AbstractGameEventListener {
 
         Material handItemType = usedItem.getType();
         Material clickedBlockType = e.getArgs().clickedBlock.getType();
-        EntityType spawnType = Materials.isMinecart(handItemType) && Materials.isRail(clickedBlockType) ?
-                EntityType.MINECART : Materials.isBoat(handItemType) ? EntityType.BOAT : null;
+        EntityType spawnType = Materials.isMinecart(handItemType) && Materials.isRail(clickedBlockType) ? EntityType.MINECART :
+                Materials.isBoat(handItemType) ? EntityType.BOAT : Materials.isCushion(handItemType) ? CUSHION_TYPE : null;
 
         if (spawnType == null) {
             return false;
@@ -368,8 +370,7 @@ public class ProtectionListener extends AbstractGameEventListener {
 
     private void onHangingBreak(GameEvent<GameEventArgs.HangingBreakEvent> e) {
         BukkitEntities.getPlayerSource(e.getArgs().remover).map(plugin.getPlayers()::getSuperiorPlayer).ifPresent(removerPlayer -> {
-            InteractionResult interactionResult = this.protectionManager.get().handleEntityInteract(removerPlayer,
-                    e.getArgs().entity, null);
+            InteractionResult interactionResult = this.protectionManager.get().handleEntityDamage(e.getArgs().remover, e.getArgs().entity);
 
             if (ProtectionHelper.shouldPreventInteraction(interactionResult, removerPlayer, true)) {
                 e.setCancelled();

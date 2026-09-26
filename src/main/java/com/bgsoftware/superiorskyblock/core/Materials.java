@@ -24,7 +24,6 @@ public enum Materials {
     NETHER_PORTAL("PORTAL"),
     END_PORTAL_FRAME("ENDER_PORTAL_FRAME");
 
-
     private static final EnumMap<Material, EnumSet<Tag>> MATERIAL_TAGS = setupMaterialTags();
     private static final EnumSet<Material> BLOCK_NON_LEGACY_MATERIALS = allOf(material -> material.isBlock() && !isLegacy(material));
     private static final EnumSet<Material> SOLID_MATERIALS = allOf(Material::isSolid);
@@ -127,6 +126,10 @@ public enum Materials {
         return hasTag(material, Tag.COPPER_GOLEM);
     }
 
+    public static boolean isCushion(Material material) {
+        return hasTag(material, Tag.CUSHION);
+    }
+
     public static boolean isGrassBlock(Material material) {
         return hasTag(material, Tag.GRASS_BLOCK);
     }
@@ -197,6 +200,8 @@ public enum Materials {
             if (copperBase.equals("COPPER_BLOCK") || copperBase.equals("EXPOSED_COPPER") ||
                     copperBase.equals("WEATHERED_COPPER") || copperBase.equals("OXIDIZED_COPPER"))
                 materialTags.add(Tag.COPPER_GOLEM);
+            if (materialName.contains("CUSHION"))
+                materialTags.add(Tag.CUSHION);
             if (ServerVersion.isLegacy() ? material == Material.GRASS : materialName.equals("GRASS_BLOCK"))
                 materialTags.add(Tag.GRASS_BLOCK);
             if (materialName.contains("DIRT"))
@@ -237,6 +242,7 @@ public enum Materials {
         HOE,
         SHELF,
         COPPER_GOLEM,
+        CUSHION,
         GRASS_BLOCK,
         DIRT
 
